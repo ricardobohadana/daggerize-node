@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Install ts-node
+        run: npm install ts-node
       - name: Dagger
         uses: dagger/dagger-for-github@v5
         with:
-          verb: dagger run
+          verb: run
           args: node --loader ts-node/esm ./test.mts
