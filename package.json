@@ -1,0 +1,36 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "`npm init` `npm install typescript -D` `npm install tsx -D` `npm install @types/node -D` `npm install vitest -D`",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "vitest",
+    "build": "tsc",
+    "start:dev": "tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@dagger.io/dagger": "^0.9.11",
+    "@rocketseat/eslint-config": "^2.2.2",
+    "@types/mssql": "^9.1.5",
+    "@types/node": "^20.11.28",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^8.57.0",
+    "supertest": "^6.3.4",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fastify": "^4.26.2",
+    "mssql": "^10.0.2",
+    "ts-node": "^10.9.2",
+    "zod": "^3.22.4"
+  }
+}
