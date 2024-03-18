@@ -7,6 +7,8 @@ const envSchema = z.object({
   DB_NAME: z.string().default('Test'),
   DB_SERVER: z.string().default('localhost'),
   DB_USER: z.string().default('sa'),
+  HOST: z.string().default('localhost'),
+  PORT: z.coerce.number().default(3000),
 })
 
 export const _env = envSchema.safeParse(process.env)
