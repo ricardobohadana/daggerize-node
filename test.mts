@@ -14,9 +14,6 @@ connect(
       .withExposedPort(1433)
       .asService()
 
-    const address =
-      'ttl.sh/myapp-' + Math.floor(Math.random() * 10000000) + ':1h'
-
     await client
       .container()
       .from('node:21')
@@ -31,12 +28,29 @@ connect(
       .withExec(['npx', 'vitest', 'run'])
       .stdout()
 
-    await client
-      .container()
-      .from('node:21')
-      .build(app)
-      .withExposedPort(3000)
-      .publish(address)
+    const dockerHubSecret = process.env.DOCKER_HUB_TOKEN
+    const dockerHubUsername = process.env.DOCKER_HUB_USERNAME
+
+    const shouldPublish = !!dockerHubSecret && !!dockerHubUsername
+
+    if (!shouldPublish) {
+      console.warn(`DOCKER_HUB_TOKEN env not set!`)
+      console.warn('Skipping publish to Docker Hub step...')
+    }
+    const dockerHubTokenSecret = client.setSecret(
+      'docker-hub-secret',
+      dockerHubSecret || '',
+    )
+
+    if (shouldPublish)
+      await client
+        .container()
+        .from('node:21')
+        .withSecretVariable('DOCKER_HUB_TOKEN', dockerHubTokenSecret)
+        .build(app)
+        .withExposedPort(3000)
+        .withRegistryAuth('docker.io', dockerHubUsername, dockerHubTokenSecret)
+        .publish(dockerHubUsername + '/daggerize-node')
   },
   { LogOutput: process.stdout },
 )

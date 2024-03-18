@@ -17,3 +17,6 @@ jobs:
         with:
           verb: run
           args: node --loader ts-node/esm ./test.mts
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+          DOCKER_HUB_USERNAME: cacolorde

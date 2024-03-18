@@ -2,13 +2,17 @@ import { app } from './app'
 import { SqlConnection } from './sql-connection'
 
 // Run the server!
-try {
-  SqlConnection.connect().then(() => {
+async function start() {
+  try {
+    await SqlConnection.connect()
     console.log('Connected to SQL Server')
-    SqlConnection.migrate()
-  })
-  app.listen({ port: 3000 })
-} catch (err) {
-  app.log.error(err)
-  process.exit(1)
+    await SqlConnection.migrate()
+    console.log('Migrated database')
+    app.listen({ port: 3000 })
+  } catch (err) {
+    app.log.error(err)
+    process.exit(1)
+  }
 }
+
+start()
