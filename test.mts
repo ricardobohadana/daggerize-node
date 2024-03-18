@@ -29,6 +29,7 @@ connect(
       .withExec(['npm', 'install'])
       .withExec(['npm', 'run', 'lint'])
       .withExec(['npx', 'vitest', 'run'])
+      .stdout()
 
     await client
       .container()
