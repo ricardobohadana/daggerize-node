@@ -13,5 +13,5 @@ jobs:
       - name: Dagger
         uses: dagger/dagger-for-github@v5
         with:
-          verb: run
+          verb: dagger run
           args: node --loader ts-node/esm ./test.mts
