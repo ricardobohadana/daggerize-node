@@ -9,7 +9,9 @@
   "scripts": {
     "test": "vitest",
     "build": "tsc",
-    "start:dev": "tsx watch src/server.ts"
+    "start:dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "lint": "eslint --quiet --ext .ts src"
   },
   "keywords": [],
   "author": "",

@@ -2,7 +2,7 @@ import Fastify from 'fastify'
 import { SqlConnection } from './sql-connection'
 
 export const app = Fastify({
-  logger: true
+  logger: true,
 })
 
 // Declare a route
@@ -18,8 +18,8 @@ app.post('/events', async (request, reply) => {
       requestId,
       eventDate,
       eventName,
-      callerIp
-    }
+      callerIp,
+    },
   })
 })
 
