@@ -7,7 +7,7 @@ services:
       ACCEPT_EULA: "Y"
   
   app:
-    image: cacolorde/daggerize-node
+    image: cacolorde/daggerize-node:latest
     environment:
       - DB_SERVER=sql-server
       - DB_USER=sa
