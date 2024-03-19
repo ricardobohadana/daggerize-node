@@ -42,15 +42,17 @@ connect(
       dockerHubSecret || '',
     )
 
+    const appContainer = client
+      .container()
+      .from('node:21')
+      .build(app)
+      .withExposedPort(3000)
     if (shouldPublish)
-      await client
-        .container()
-        .from('node:21')
+      await appContainer
         .withSecretVariable('DOCKER_HUB_TOKEN', dockerHubTokenSecret)
-        .build(app)
-        .withExposedPort(3000)
         .withRegistryAuth('docker.io', dockerHubUsername, dockerHubTokenSecret)
         .publish(dockerHubUsername + '/daggerize-node')
+    else await appContainer.export('./node-dagger-local-image.tar')
   },
   { LogOutput: process.stdout },
 )

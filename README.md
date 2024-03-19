@@ -18,3 +18,10 @@ add script to package.json
 
 ## Adding Dagger
 `npm install @dagger.io/dagger@0.9 -D`
+
+## Running dagger
+`dagger run node --loader ts-node/esm ./test.mts`
+
+## Loading exported image to docker:
+`docker load -i node-dagger-local-image.tar`   
+`docker tag <image-sha> <img-name>:<img-tag>` 
