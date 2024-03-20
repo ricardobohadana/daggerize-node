@@ -16,7 +16,7 @@ jobs:
           version: "0.10.2"
           verb: call
           module: ci
-          args: publish --source=.
+          args: publish --directory .
         env:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
           DOCKER_HUB_USERNAME: cacolorde
