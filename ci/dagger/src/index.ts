@@ -52,15 +52,15 @@ class Ci {
 
     const shouldPublish = !!dockerHubSecret && !!dockerHubUsername
 
-    if (!shouldPublish) {
-      console.warn(`DOCKER_HUB_TOKEN env not set!`)
-      console.warn('Skipping publish to Docker Hub step...')
-    }
     const dockerHubTokenSecret = dag.setSecret(
       'docker-hub-secret',
       dockerHubSecret || '',
     )
-    const appContainer = dag.container().build(directory).withExposedPort(3000)
+    const appContainer = dag
+      .container()
+      .from('node:21')
+      .build(directory)
+      .withExposedPort(3000)
 
     if (shouldPublish)
       appContainer
