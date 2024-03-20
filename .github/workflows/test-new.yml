@@ -16,7 +16,11 @@ jobs:
           version: "0.10.2"
           verb: call
           module: ci
-          args: publish --directory .
+          args: |
+              publish \
+              --directory . \
+              --dockerHubCredential env:DOCKER_HUB_TOKEN \
+              --dockerHubUsername cacolorde
+
         env:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-          DOCKER_HUB_USERNAME: cacolorde

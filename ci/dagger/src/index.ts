@@ -14,7 +14,14 @@
  * if appropriate. All modules should have a short description.
  */
 
-import { dag, Directory, object, func, Service } from '@dagger.io/dagger'
+import {
+  dag,
+  Directory,
+  object,
+  func,
+  Service,
+  Secret,
+} from '@dagger.io/dagger'
 
 @object()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,54 +33,6 @@ class Ci {
       .withEnvVariable('ACCEPT_EULA', 'Y')
       .withEnvVariable('SA_PASSWORD', 'Password123')
       .withExposedPort(1433)
-      .asService()
-  }
-
-  /**
-   * Runs lint, tests and publishes the app image to DockerHub
-   */
-  @func()
-  async publish(directory: Directory) {
-    const db = this.createDatabase()
-
-    await this.buildBaseImageWithDb(directory, db)
-      .withExec(['run', 'lint'])
-      .withExec(['run', 'test'])
-      .stdout()
-
-    const dockerHubSecret = process.env.DOCKER_HUB_TOKEN
-    const dockerHubUsername = process.env.DOCKER_HUB_USERNAME
-
-    const shouldPublish = !!dockerHubSecret && !!dockerHubUsername
-
-    const dockerHubTokenSecret = dag.setSecret(
-      'docker-hub-secret',
-      dockerHubSecret || '',
-    )
-    const appContainer = dag
-      .container()
-      .from('node:21')
-      .build(directory)
-      .withExposedPort(3000)
-
-    if (shouldPublish)
-      appContainer
-        .withSecretVariable('DOCKER_HUB_TOKEN', dockerHubTokenSecret)
-        .withRegistryAuth('docker.io', dockerHubUsername, dockerHubTokenSecret)
-        .publish(dockerHubUsername + '/daggerize-node')
-    else {
-      return appContainer.asTarball()
-    }
-  }
-
-  @func()
-  serve(directory: Directory) {
-    const db = this.createDatabase()
-
-    return this.buildBaseImageWithDb(directory, db)
-      .withEnvVariable('HOST', '0.0.0.0')
-      .withExposedPort(3000)
-      .withExec(['run', 'start:dev'])
       .asService()
   }
 
@@ -89,5 +48,52 @@ class Ci {
       .withEnvVariable('DB_SERVER', 'sql-server')
       .withEnvVariable('DB_USER', 'sa')
       .withEnvVariable('DB_PASSWORD', 'Password123')
+  }
+
+  /**
+   * Runs lint, tests and publishes the app image to DockerHub
+   */
+  @func()
+  async publish(
+    directory: Directory,
+    dockerHubCredential?: Secret,
+    dockerHubUsername?: string,
+  ) {
+    // const db = this.createDatabase()
+
+    // await this.buildBaseImageWithDb(directory, db)
+    //   .withExec(['run', 'lint'])
+    //   .withExec(['run', 'test'])
+    //   .stdout()
+
+    const shouldPublish = !!dockerHubCredential && !!dockerHubUsername
+
+    const appContainer = dag
+      .container()
+      .from('node:21')
+      .build(directory)
+      .withExposedPort(3000)
+
+    if (shouldPublish)
+      appContainer
+        .withRegistryAuth('docker.io', dockerHubUsername, dockerHubCredential)
+        .publish(dockerHubUsername + '/daggerize-node')
+    else {
+      return appContainer.asTarball()
+    }
+  }
+
+  /**
+   * Serves the app in dev environment with a database
+   */
+  @func()
+  serve(directory: Directory) {
+    const db = this.createDatabase()
+
+    return this.buildBaseImageWithDb(directory, db)
+      .withEnvVariable('HOST', '0.0.0.0')
+      .withExposedPort(3000)
+      .withExec(['run', 'start:dev'])
+      .asService()
   }
 }
