@@ -20,7 +20,6 @@ jobs:
               publish \
               --directory . \
               --dockerHubCredential env:DOCKER_HUB_TOKEN \
-              --dockerHubUsername cacolorde
-
-        env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+              --dockerHubUsername cacolorde \
+          env:
+            DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
