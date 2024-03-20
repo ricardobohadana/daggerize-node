@@ -14,36 +14,30 @@
  * if appropriate. All modules should have a short description.
  */
 
-import { dag, Directory, object, func } from '@dagger.io/dagger'
+import { dag, Directory, object, func, Service } from '@dagger.io/dagger'
 
 @object()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class Ci {
-  /**
-   * Runs lint, tests and publishes the app image to DockerHub
-   */
-  @func()
-  async publish(directory: Directory) {
-    const db = dag
+  createDatabase() {
+    return dag
       .container()
       .from('mcr.microsoft.com/mssql/server:2019-latest')
       .withEnvVariable('ACCEPT_EULA', 'Y')
       .withEnvVariable('SA_PASSWORD', 'Password123')
       .withExposedPort(1433)
       .asService()
+  }
 
-    await dag
-      .node()
-      .withVersion('21')
-      .withNpm()
-      .withSource(directory)
-      .install([])
-      .container()
+  /**
+   * Runs lint, tests and publishes the app image to DockerHub
+   */
+  @func()
+  async publish(directory: Directory) {
+    const db = this.createDatabase()
+
+    await this.buildBaseImageWithDb(directory, db)
       .withExec(['run', 'lint'])
-      .withServiceBinding('sql-server', db)
-      .withEnvVariable('DB_SERVER', 'sql-server')
-      .withEnvVariable('DB_USER', 'sa')
-      .withEnvVariable('DB_PASSWORD', 'Password123')
       .withExec(['run', 'test'])
       .stdout()
 
@@ -70,5 +64,30 @@ class Ci {
     else {
       return appContainer.asTarball()
     }
+  }
+
+  @func()
+  serve(directory: Directory) {
+    const db = this.createDatabase()
+
+    return this.buildBaseImageWithDb(directory, db)
+      .withEnvVariable('HOST', '0.0.0.0')
+      .withExposedPort(3000)
+      .withExec(['run', 'start:dev'])
+      .asService()
+  }
+
+  buildBaseImageWithDb(directory: Directory, db: Service) {
+    return dag
+      .node()
+      .withVersion('21')
+      .withNpm()
+      .withSource(directory)
+      .install([])
+      .container()
+      .withServiceBinding('sql-server', db)
+      .withEnvVariable('DB_SERVER', 'sql-server')
+      .withEnvVariable('DB_USER', 'sa')
+      .withEnvVariable('DB_PASSWORD', 'Password123')
   }
 }

@@ -36,6 +36,7 @@
 ### Running dagger (new version)
 `dagger call -h`
 `dagger call -m ci -o test.tar publish --directory .`
+`dagger call -m ci serve --directory . up --ports=3000:3000`
 
 ### Adding Dagger (xdc version)
 `npm install @dagger.io/dagger@0.9 -D`
