@@ -34,7 +34,8 @@
 `dagger install github.com/quartz-technology/daggerverse/node@v0.0.1`
 
 ### Running dagger (new version)
-`dagger call publish --directory . -o test.tar`
+`dagger call -h`
+`dagger call -m ci -o test.tar publish --directory .`
 
 ### Adding Dagger (xdc version)
 `npm install @dagger.io/dagger@0.9 -D`

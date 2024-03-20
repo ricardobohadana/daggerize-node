@@ -39,12 +39,12 @@ class Ci {
       .withSource(directory)
       .install([])
       .container()
-      .withExec(['npm', 'run', 'lint'])
+      .withExec(['run', 'lint'])
       .withServiceBinding('sql-server', db)
       .withEnvVariable('DB_SERVER', 'sql-server')
       .withEnvVariable('DB_USER', 'sa')
       .withEnvVariable('DB_PASSWORD', 'Password123')
-      .withExec(['npx', 'vitest', 'run'])
+      .withExec(['run', 'test'])
       .stdout()
 
     const dockerHubSecret = process.env.DOCKER_HUB_TOKEN
@@ -63,7 +63,7 @@ class Ci {
     const appContainer = dag.container().build(directory).withExposedPort(3000)
 
     if (shouldPublish)
-      return await appContainer
+      appContainer
         .withSecretVariable('DOCKER_HUB_TOKEN', dockerHubTokenSecret)
         .withRegistryAuth('docker.io', dockerHubUsername, dockerHubTokenSecret)
         .publish(dockerHubUsername + '/daggerize-node')
