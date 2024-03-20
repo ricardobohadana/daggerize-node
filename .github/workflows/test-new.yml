@@ -21,5 +21,5 @@ jobs:
               --directory . \
               --dockerHubCredential env:DOCKER_HUB_TOKEN \
               --dockerHubUsername cacolorde \
-          env:
-            DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
