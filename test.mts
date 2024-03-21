@@ -35,7 +35,7 @@ connect(
 
     if (!shouldPublish) {
       console.warn(`DOCKER_HUB_TOKEN env not set!`)
-      console.warn('Skipping publish to Docker Hub step...')
+      console.warn('Skipping publish to Docker Hub step.. .')
     }
     const dockerHubTokenSecret = client.setSecret(
       'docker-hub-secret',
